@@ -1,0 +1,11 @@
+smtp:
+    host: smtp.gmail.com
+    port: 587
+    domain: gmail.com
+    user: username@gmail.com
+    password: PAS$WORD
+
+mail:
+    from: user@gmail.com
+    to: user@gmail.com, staff@gmail.com
+    subject: Global IP address updated
