@@ -1,0 +1,5 @@
+#!/usr/bin/env ruby
+
+require "ip_notifier"
+
+IpNotifier::CLI.start
