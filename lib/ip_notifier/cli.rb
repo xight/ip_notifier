@@ -19,11 +19,9 @@ module IpNotifier
 			log("info", "Current : #{current_ip}")
 			log("info", "Previous: #{previous_ip}")
 
-			if current_ip != previous_ip
+			if current_ip != previous_ip and !current_ip.empty?
 				update_ip(current_ip)
-
 				notify(current_ip)
-
 			else
 				log("info", "Not updated")
 			end
@@ -31,7 +29,22 @@ module IpNotifier
 
 		desc "", ""
 		def get_current_ip
-			return Typhoeus.get(@@URL).options[:response_body].strip
+			request = Typhoeus::Request.new(@@URL, followlocation: true)
+
+			request.on_complete do |response|
+				if response.success?
+					return response.options[:response_body].strip
+				elsif response.timed_out?
+					log("error", "Typhoeus: got a time out")
+				elsif response.code == 0
+					# Could not get an http response, something's wrong.
+					log("error", response.return_message)
+				else
+					# Received a non-successful http response.
+					log("error", "HTTP request failed: " + response.code.to_s)
+				end
+			end
+			request.run
 		end
 
 		desc "", ""
